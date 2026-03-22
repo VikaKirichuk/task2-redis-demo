@@ -21,13 +21,13 @@ public class RedisAvailabilityChecker {
 
     @Scheduled(fixedDelay = 10000)
     public void checkRedisAvailability() {
-        log.warn("=== Scheduler tick. Redis available: {} ===", redisAvailable.get());
+        log.info("=== Scheduler tick. Redis available: {} ===", redisAvailable.get());
 
         if (redisAvailable.get()) {
             // Redis був підключений — перевіряємо чи він ще живий
             try {
                 redisClient.getBucket("health-check").get();
-                log.warn("Redis is still alive.");
+                log.info("Redis is still alive.");
             } catch (Exception e) {
                 log.warn("Redis went down! Switching to local cache...");
                 redisAvailable.set(false);
@@ -41,7 +41,7 @@ public class RedisAvailabilityChecker {
         try {
             RedissonClient client = redissonConfig.createRedissonClient();
             client.getBucket("health-check").get();
-            log.warn("Redis is now available! Switching...");
+            log.info("Redis is now available! Switching...");
             RedissonClient oldClient = this.redisClient;
             this.redisClient = client;
             redisAvailable.set(true);
